@@ -1,0 +1,51 @@
+version: '3.4'
+
+services:
+  php:
+    build:
+      context: '.'
+      target: 'dev'
+    environment:
+      COMPOSER_CACHE_DIR: '/home/composer/.cache/composer'
+      COMPOSER_HOME: '/home/composer/.config/composer'
+      PHP_CONF_DISPLAY_ERRORS: 1
+      PHP_CONF_DISPLAY_STARTUP_ERRORS: 1
+      PHP_CONF_ERROR_REPORTING: 32767
+      PHP_CONF_OPCACHE_VALIDATE_TIMESTAMP: 1
+      PHP_CONF_ZEND_ASSERTIONS: 1
+      PHP_IDE_CONFIG: 'serverName=php-docker-minimal-setup-cli'
+      XDEBUG_CONFIG: 'remote_host=172.17.0.1'
+      XDEBUG_ENABLED: '${XDEBUG_ENABLED:-0}'
+    image: 'carcel/php-docker-minimal-setup/php:latest'
+    user: '${HOST_USER_IDS:-1000:1000}'
+    volumes:
+      - '.:/srv/app:rw'
+      - '${HOST_COMPOSER_CACHE_DIR:-~/.cache/composer}:/home/composer/.cache/composer'
+      - '${HOST_COMPOSER_HOME:-~/.config/composer}:/home/composer/.config/composer'
+    working_dir: '/srv/app'
+
+  fpm:
+    build:
+      context: '.'
+      target: 'dev'
+    environment:
+      PHP_IDE_CONFIG: 'serverName=php-docker-minimal-setup-fpm'
+      XDEBUG_CONFIG: 'remote_host=172.17.0.1'
+      XDEBUG_ENABLED: '${XDEBUG_ENABLED:-0}'
+    command: 'php-fpm -F'
+    image: 'carcel/php-docker-minimal-setup/php:latest'
+    restart: 'always'
+    volumes:
+      - '.:/srv/app:rw'
+    working_dir: '/srv/app'
+
+  nginx:
+    depends_on:
+      - 'fpm'
+    image: 'nginx:alpine'
+    ports:
+      - '8080:80'
+    restart: 'always'
+    volumes:
+      - './docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro'
+      - '.:/srv/app:ro'
