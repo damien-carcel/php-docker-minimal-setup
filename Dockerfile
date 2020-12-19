@@ -71,19 +71,12 @@ RUN apt-get update && \
         unzip && \
     apt-get clean && \
     apt-get --yes autoremove --purge && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    phpdismod xdebug && \
-    mkdir /etc/php/7.4/enable-xdebug && \
-    ln -s /etc/php/7.4/mods-available/xdebug.ini /etc/php/7.4/enable-xdebug/xdebug.ini
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Configure XDEBUG and make XDEBUG activable at container start
 COPY docker/php/xdebug.ini /etc/php/7.4/cli/conf.d/99-xdebug.ini
 COPY docker/php/xdebug.ini /etc/php/7.4/fpm/conf.d/99-xdebug.ini
-COPY docker/php/docker-php-entrypoint /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-php-entrypoint
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN chmod +x /usr/local/bin/composer
-
-ENTRYPOINT ["/usr/local/bin/docker-php-entrypoint"]
