@@ -33,11 +33,11 @@ build: pull ## Build the PHP Docker image.
 # Use the application
 
 .PHONY: php
-php: ## Execute anything in the PHP container. For example, use "make php IO='php -a'" to access the PHP interactive shell. Use "XDEBUG_ENABLED=1 make php" to activate the debugger.
+php: ## Execute anything in the PHP container. For example, use "make php IO='php -a'" to access the PHP interactive shell. Use "XDEBUG_MODE=debug make php" to activate the debugger.
 	@docker-compose run --rm php ${IO}
 
 .PHONY: serve
-serve: #main# Run the API using the PHP development server. Use "XDEBUG_ENABLED=1 make serve" to activate the debugger.
+serve: #main# Run the API using the PHP development server. Use "XDEBUG_MODE=debug make serve" to activate the debugger.
 	@echo "..."
 	@echo "Starting the application"
 	@echo "..."

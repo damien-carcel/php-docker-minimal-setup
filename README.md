@@ -8,7 +8,7 @@
 
 ## How to use
 
-Run `make` to see the command available.
+Run `make` to see the commands available and how to use them.
 
 ## License
 
